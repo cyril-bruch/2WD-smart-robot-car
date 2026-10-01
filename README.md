@@ -2,7 +2,7 @@
 
 An embedded Model-Based Design (MBD) project featuring an autonomous 2WD obstacle-avoidance robot. The architecture uses **MATLAB**, **Simulink**, and **Stateflow** to target an **ESP32-S3** microcontroller via automatic C code generation.
 
-## 🛠 Hardware Architecture
+##  Hardware Architecture
 * **Microcontroller:** ESP32-S3 DevKit (N16R8)
 * **Actuators:** 2x DC Motors with L298N H-Bridge Driver, SG90 Servo Motor
 * **Sensors:** HC-SR04 Ultrasonic Distance Sensor
