@@ -1,0 +1,17 @@
+#cache et fichiers temporaires Simulink/MATLAB
+slprj/
+*.slxc
+*.m~
+*.asv
+*.mex*
+*.p
+*.log
+
+#fichiers de code généré
+*_ert_rtw/
+*_grt_rtw/
+*_sfprj/
+
+#fichiers système
+.DS_Store
+Thumbs.db
