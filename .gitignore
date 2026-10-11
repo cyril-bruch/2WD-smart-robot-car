@@ -1,17 +1,25 @@
-#cache et fichiers temporaires Simulink/MATLAB
+# Simulink / MATLAB cache and temporary files
 slprj/
 *.slxc
+*.autosave
 *.m~
 *.asv
 *.mex*
 *.p
 *.log
 
-#fichiers de code généré
+# Generated code
 *_ert_rtw/
 *_grt_rtw/
 *_sfprj/
 
-#fichiers système
+# Build outputs (Arduino / ESP32)
+*.bin
+*.elf
+*.hex
+*.eep
+*.map
+
+# OS files
 .DS_Store
 Thumbs.db
