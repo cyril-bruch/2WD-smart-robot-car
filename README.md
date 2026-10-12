@@ -1,5 +1,7 @@
 # Autonomous Obstacle-Avoiding Robot Car (Simulink + Stateflow)
 
+![Demo of the robot car](media/demo.gif)
+
 A 2WD robot car that drives forward, slows down as it approaches an obstacle, stops, scans left and right with an ultrasonic sensor on a servo, then turns toward the freest side. The whole behavior is built as a **Simulink** model with a **Stateflow** state machine, and deployed to an **Arduino UNO** board.
 
 ## Hardware
@@ -11,6 +13,7 @@ A 2WD robot car that drives forward, slows down as it approaches an obstacle, st
 | 2x DC motors (2WD chassis) | Propulsion |
 | SG90 servo (pin 4) | Rotates the ultrasonic sensor |
 | HC-SR04 ultrasonic sensor | Distance measurement |
+| DHT22 | Temperature (used to correct the distance) |
 | Battery pack | Power supply (see note below) |
 
 ### Wiring
@@ -26,12 +29,16 @@ A 2WD robot car that drives forward, slows down as it approaches an obstacle, st
 
 > Use fully charged batteries when testing. Motor speed and turn angles change as the battery drains, so results from half-empty batteries are not comparable.
 
-> You can find the structure and most pieces in this pack : https://fr.aliexpress.com/item/1005003375983337.html?spm=a2g0o.order_list.order_list_main.5.1c265e5bcMl4og&gatewayAdapt=glo2fra
+> You can find the chassis and most of the parts in this kit: https://fr.aliexpress.com/item/1005003375983337.html
 
 ## Requirements
 
-* MATLAB with Simulink and Stateflow (developed with R2026a)
-* Simulink Support Package for Arduino Hardware
+* **MATLAB** (developed with R2026a)
+* **Simulink**
+* **Stateflow**
+* **Simulink Support Package for Arduino Hardware**: provides the blocks for the servo, the HC-SR04, the DHT22 and the digital/PWM outputs, and builds and uploads the program to the board
+
+No Arduino library has to be installed by hand: the support package handles it. The median filter and the motor decoder are plain MATLAB Function blocks and need no extra toolbox.
 
 ## Getting started
 
@@ -45,6 +52,8 @@ A 2WD robot car that drives forward, slows down as it approaches an obstacle, st
 
 ### State machine (`car modes`)
 
+![Stateflow chart](media/stateflow.png)
+
 * **Initialization**: waits `t_init` seconds with the motors off.
 * **Check_front**: looks straight ahead. If the front is clear, it goes forward; otherwise it scans.
 * **Move_forward**: drives at full speed. Goes to **Slowdown** when the obstacle is closer than `d_slow_start`.
@@ -56,7 +65,7 @@ A 2WD robot car that drives forward, slows down as it approaches an obstacle, st
 
 ### Distance measurement
 
-HC-SR04 reading, a 3-sample median filter (removes isolated bad readings), and an exponential low-pass filter (a). The distance is then corrected in the "distance correction" block using the temperature reading from the DHT22.
+HC-SR04 reading, a 3-sample median filter (removes isolated bad readings), and an exponential low-pass filter (`alpha`). The distance is then corrected in the "distance correction" block using the temperature reading from the DHT22.
 
 ### Motor control (`cmdMotor`)
 
@@ -94,14 +103,14 @@ Every robot is different (motors, battery, floor). Expect to tune these values:
 
 * **Drift in a straight line**: if the car drifts left, increase `offset_left`; if it drifts right, increase `offset_right`. Both are 0 by default.
 * **Stopping distance**: the car keeps moving after braking. Measure where it stops and adjust `d_stop`.
-* **Turn angle**: turns are timed, not measured. Adjust `t_turn_left` and `t_turn_right` until each turn is about 45°.
+* **Turn angle**: turns are timed, not measured. Adjust `t_turn` until each turn is about 45°.
 * **Motors not moving at low speed**: raise `v_min` and `v_turn`.
 
 ## Known limitations
 
 * Turns are open-loop (timed), so the angle depends on battery level and floor grip.
 * The car drifts slightly in a straight line (no heading correction yet).
-* The HC-SR04 read can take longer than the model's 10 ms step, which can stretch the timed states.
+* The HC-SR04 and DHT22 reads can take longer than the model's 10 ms step, which can stretch the timed states.
 
 ## Roadmap
 
@@ -111,4 +120,5 @@ Every robot is different (motors, battery, floor). Expect to tune these values:
 
 * `SmartRobotCar.slx`: Simulink model (Stateflow chart, motor control, ultrasonic subsystem)
 * `params.m`: tunable parameters
+* `media/`: demo GIF and Stateflow screenshot used in this README
 * `.gitignore`: excludes Simulink cache, generated code and build outputs
